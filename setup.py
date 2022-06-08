@@ -1,10 +1,10 @@
-import setuptools
+import setuptools 
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name='measure_process',
+    name='Measure_and_process',
     version='0.0.1',
     description='Testing installation of Package',
     long_description=long_description,
