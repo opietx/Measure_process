@@ -4,30 +4,25 @@ import matplotlib.pyplot as plt
 
 
 from lmfit import Parameters, Minimizer, conf_interval, printfuncs
-
-def Decay_formula(pars, x, data=None):
+def beta_formula(pars, x, data=None):
     amp = pars['amp'].value
-    off = pars['off'].value
-    T1 = pars['T1'].value
-    
-    model = amp*np.exp(-x/T1) + off
+    # off = pars['off'].value
+    beta = pars['beta'].value
 
+    model = amp*x**(beta/(1+beta)) 
+    
     if data is None:
         return model
 
     return np.nan_to_num((model - data)*1e6)
     
-def fit_decay_T1(x,y, title='',plot=False):
-    x = x[~np.isnan(y)]
-    y = y[~np.isnan(y)]
-    
+def fit_Beta(x,y, title='', plot=False):
     fit_params = Parameters()
-    fit_params.add('amp', value=y.max()-y.min(), max=1.0, min=-1.0)
-    fit_params.add('off', value=y.max(), max=1.0, min=-1.0)
-    fit_params.add('T1', value=x[int(len(x)/2)]/4)
+    fit_params.add('amp', value=1)
+    # fit_params.add('off', value=0.3)
+    fit_params.add('beta', value=1, max=3, min=-3)
     
-    
-    mini = Minimizer(Decay_formula, fit_params, fcn_args=(x, y))
+    mini = Minimizer(beta_formula, fit_params, fcn_args=(x, y))
     out = mini.minimize()
     errors = {}
     try:
@@ -42,20 +37,17 @@ def fit_decay_T1(x,y, title='',plot=False):
     
     
     if plot == True:
-        fit = Decay_formula(out.params, x)    
+        fit = beta_formula(out.params, x)    
+        
         # plt.figure()
         plt.plot(x,y,'o')
         plt.plot(x,fit,linewidth=5, alpha=0.5)
-        # fit = Decay_formula(fit_params, x)    
+        # fit = Ramsey_formula(fit_params, x)    
         # plt.plot(x,fit,'-')
-        plt.title(f'uuid={title} \n T1 = {out.params["T1"].value} s')
-        plt.ylabel('fraction spin-up')
-        plt.xlabel('waiting time [s]')
+        plt.title(f'uuid={title} \n B = {out.params["beta"].value}')
+        plt.ylabel('T2_CPMG [s]')
+        plt.xlabel('N-pulses')
         plt.show()
-    print(f'T1 = {out.params["T1"].value} s')
+    print(f'beta = {out.params["beta"].value}')
     return out.params, errors
         
-    
-    
-    
-
