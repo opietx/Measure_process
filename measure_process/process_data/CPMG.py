@@ -7,12 +7,12 @@ from measure_process.fits.T2_star import  Ramsey_formula, fit_CPMG
 from measure_process.fits.CPMG_noise import  fit_Beta
 
 #%% 1 dataset averaged all
-qubit = 5
+qubit = 1
 plot = True 
 
-uuid = 1659545405164974087    
+uuid = 1666189784524974087     
 ds = load_by_uuid(uuid)
-data_plotter(ds)
+# data_plotter(ds)
 ds_avg = ds[f'read{qubit}'].average('x')
 
 params, errors = fit_CPMG(1e-9*ds_avg.x()[:], ds_avg.y()[:], uuid, plot=plot)
@@ -21,14 +21,14 @@ print(errors['T2'])
 #%% to select multiple datasets parts
 y_multiple = []
 
-qubit = 2
+qubit = 12
 plot = True 
-uuid = 1663567855303974076    
+uuid = 1666189784524974087      
 ds = load_by_uuid(uuid)
 # data_plotter(ds)
 
 
-for ii in range(1,3):
+for ii in range(0,1):
     y_multiple.append(ds[f'read{qubit}'][ii].y())
 
 y_avg = sum(y_multiple)/len(y_multiple)

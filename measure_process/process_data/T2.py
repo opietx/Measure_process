@@ -6,12 +6,12 @@ from core_tools.data.ds.data_set import load_by_uuid
 from measure_process.fits.T2_star import  Ramsey_formula, fit_Ramsey
 
 #%% 1 dataset averaged all
-qubit = 2
+qubit = 1
 plot = True 
-uuid = 1665044740538974087
+uuid = 1661981084969974076
 ds = load_by_uuid(uuid)
 # data_plotter(ds)
-ds_avg = ds[f'read{qubit}'].average('x')
+ds_avg = ds[f'read{qubit}']
 
 params, errors = fit_Ramsey(1e-9*ds_avg.x()[:], ds_avg.y()[:], uuid, plot=plot)
 print(errors['T2'])
