@@ -75,10 +75,12 @@ def obtain_slope_give_voltage(uuid,meas_point):
 
 #%%
 plot = True 
-uuid =1659354850881974087#     
-# new_slope = obtain_slope_give_voltage(uuids_CP[ii], meas_points[ii])
-x, y = to_PSD(uuid, n_seg=20, lever_arm=1, new_slope=1.4299499961589247e-11, old_slope=1)    
+uuid =1659439070335974087#     
+new_slope = obtain_slope_give_voltage(1659354729808974087, 1534.995030060120)
+x, y = to_PSD(uuid, n_seg=20, lever_arm=0.185, new_slope=new_slope, old_slope=1.4299499961589247e-11)    
 params, errors = fit_PSD(x,y,name=uuid,plot=plot)
+dic_psd = {'Freq':x,f'PSD':y}
+data_dump(dic_psd,'Charge_noise',f'aaa') #if you want to export the PSD aswell
 
 #%%
 temps = [200,300,400,500,600,700,800,900,950,1000,1050,1100,1200,1300]
