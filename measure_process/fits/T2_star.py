@@ -1,4 +1,3 @@
-import qcodes as qc
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -10,9 +9,10 @@ def Ramsey_formula(pars, x, data=None):
     omega = pars['omega'].value
     phi = pars['phi'].value
     T2 = pars['T2'].value
+    alpha = pars['alpha'].value
 
-    model = amp*np.cos(2*np.pi*omega*x + phi)*np.exp(-(x/T2)**2) + off
-
+    model = amp*np.cos(2*np.pi*omega*x + phi)*np.exp(-(x/T2)**alpha) + off
+    
     if data is None:
         return model
 
@@ -25,6 +25,7 @@ def fit_Ramsey(x,y, title='', plot=False,freq_init=2e6):
     fit_params.add('omega', value=freq_init)
     fit_params.add('phi', value=0)
     fit_params.add('T2', value=5e-6, min = 0)
+    fit_params.add('alpha', value=2, min = 1, max = 3, vary=False)
     
     mini = Minimizer(Ramsey_formula, fit_params, fcn_args=(x, y))
     out = mini.minimize()

@@ -1,5 +1,5 @@
 from core_tools.data.SQL.connect import SQL_conn_info_local, set_up_remote_storage, sample_info, set_up_local_storage
-set_up_remote_storage('131.180.205.81', 5432, 'xld_measurement_pc', 'XLDspin001', 'sixdots', "6dot", "XLD", "6D2S - SQ21-XX-X-XX-X")
+set_up_remote_storage('131.180.205.81', 5432, 'xld_measurement_pc', 'XLDspin001', 'sixdots', "6dot", "XLD", "any")
 
 
 from core_tools.data.gui.qml.data_browser import data_browser

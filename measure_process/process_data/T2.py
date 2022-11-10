@@ -117,9 +117,9 @@ temps = [200,250,300,350,400,450,500,550,600,650,700,750,800,850]
 #          1659151749947974087 ,1659156838716974087 ,1659162483613974087 ,1659167521781974087 ,1659172184310974087 ,1659177786118974087 ,1659182236641974087 ]
 
 
-# qubit = 6
-# uuids = [1659116624643974087 ,1659121715873974087 ,1659126514223974087 ,1659132261101974087 ,1659137917441974087 ,1659143097809974087 ,1659147435028974087 ,
-#          1659152268437974087 ,1659157359730974087 ,1659163005408974087 ,1659168463759974087 ,1659173268730974087 ,1659178307657974087 ,1659183157684974087 ]
+qubit = 6
+uuids = [1659116624643974087 ,1659121715873974087 ,1659126514223974087 ,1659132261101974087 ,1659137917441974087 ,1659143097809974087 ,1659147435028974087 ,
+          1659152268437974087 ,1659157359730974087 ,1659163005408974087 ,1659168463759974087 ,1659173268730974087 ,1659178307657974087 ,1659183157684974087 ]
 
 #%%##
 dic_data = {'Temp':temps,f'Q{qubit}':np.empty(len(temps)),'low':np.empty(len(temps)),'top':np.empty(len(temps))}
@@ -127,13 +127,13 @@ for ii, uuid  in enumerate(uuids):
     ds = load_by_uuid(uuid)
     ds_avg = ds[f'read{qubit}'].average('x')
     params,errors = fit_Ramsey(1e-9*ds_avg.x()[10:], ds_avg.y()[10:], uuid, plot=False)
-    dic_data[f'Q{qubit}'][ii] = abs(params['T2'].value)
-    dic_data['low'][ii] = errors['T2'][0]
-    dic_data['top'][ii] = errors['T2'][1]
+    dic_data[f'Q{qubit}'][ii] = abs(params['alpha'].value)
+    dic_data['low'][ii] = errors['alpha'][0]
+    dic_data['top'][ii] = errors['alpha'][1]
     
 
 
-plt.figure()
+# plt.figure()
 plt.errorbar(np.array(temps),dic_data[f'Q{qubit}'], yerr=dic_data['low'],fmt='o-',label=qubit)
 plt.xlabel('T_mc [mK]')
 plt.ylabel('T2* [s]')
@@ -142,4 +142,4 @@ plt.show()
 
 
 #dump data
-data_dump(dic_data,'T2/for Lieven',f'Q{qubit}')
+# data_dump(dic_data,'T2/for Lieven',f'Q{qubit}')
