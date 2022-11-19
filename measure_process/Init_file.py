@@ -6,6 +6,7 @@ from core_tools.data.gui.qml.data_browser import data_browser
 from core_tools.data.gui.plot_mgr import data_plotter
 from core_tools.data.ds.data_set import load_by_uuid
 
+from core_tools.data.SQL.queries.dataset_gui_queries import query_for_measurement_results
 
 
 
@@ -43,6 +44,44 @@ def data_dump(data, folder, name):
         
     df = pd.DataFrame.from_dict(data, orient='index').transpose()
     df.to_csv(os.path.join(dire,name + ".csv"), index=False, mode='w+',header = list(data.keys()))
+
+def query_database(init_time = '2022-11-16 11:57:50', final_time='2022-11-16 23:59', name='', echo=True):
+    '''
+    queries the remote DB to extract the info about the measurements satisfyign the query.
+    for now we query time-range but other things can be added    
+
+
+    Parameters
+    ----------
+    init_time : str, optional
+        initial time, see format for default. The default is '2022-11-16 11:57:50'.
+    final_time : str, optional
+        final query time. The default is '2022-11-16 23:59'.
+
+    Returns
+    -------
+    res : dictionary
+        contains uuid, name, date of all measurements satisfying the query 
+
+    '''
+    
+    res = query_for_measurement_results.search_query(
+            start_time=init_time, end_time=final_time,
+            name = name,
+            remote=True)
+    datasets = {'uuid':[],'name':[],'date':[]}
+    for ii,exp in enumerate(res):
+        datasets['uuid'].append(exp.uuid)
+        datasets['name'].append(exp.name)
+        datasets['date'].append(exp.start_time)
+    if echo:
+        print("{:<3}\t{:<20}t{:<20}".format('num','UUID','name'))
+        for ii, uuid in enumerate(datasets['uuid']):
+            print("{:<3}\t{:<20}\t{:<20}".format(ii, uuid, datasets['name'][ii]))
+        
+    return datasets
+ 
+ 
 
 
 if __name__ == "__main__":

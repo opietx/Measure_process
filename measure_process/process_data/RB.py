@@ -9,7 +9,7 @@ from measure_process.fits.RB import fit_RB
 
 qubit = 2
 plot = True 
-uuid = 1668010887753974087
+uuid = 1668189706800974076
 ds = load_by_uuid(uuid)
 # view = data_plotter(ds)
 

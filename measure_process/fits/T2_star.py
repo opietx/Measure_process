@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from numba import jit
 
 
 from lmfit import Parameters, Minimizer, conf_interval, printfuncs
@@ -17,7 +18,8 @@ def Ramsey_formula(pars, x, data=None):
         return model
 
     return np.nan_to_num((model - data)*1e6)
-    
+
+# @jit # Set "nopython" mode for best performance, equivalent to @njit
 def fit_Ramsey(x,y, title='', plot=False,freq_init=2e6):
     fit_params = Parameters()
     fit_params.add('amp', value=0.3, max=1.0, min=-1.0)
@@ -53,7 +55,7 @@ def fit_Ramsey(x,y, title='', plot=False,freq_init=2e6):
         plt.ylabel('fraction spin-up')
         plt.xlabel('waiting time [s]')
         plt.show()
-    print(f'T2 = {out.params["T2"].value*1e6} us')
+    # print(f'T2 = {out.params["T2"].value*1e6} us')
     return out.params, errors
         
 
