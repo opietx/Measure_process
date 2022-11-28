@@ -77,27 +77,68 @@ def vals_mask(ds_avg,thr):
         mask=[]
     return mask
 
+
+search_time = ['2022-11-19 17:18:00','2022-11-20 23:59:59']
 #%% obtain the readout traces
-datasets = query_database('2022-11-16 10:50:30','2022-11-16 16:20:30', name = 'MW' )
+datasets = query_database(search_time[0],search_time[1], name = 'MW' )
+readout_points = []
+readout_vis = []
 for ii in tqdm(range(int(len(datasets['uuid'])/2 -1 ))):
     ii *= 2
     noMW = datasets['uuid'][ii]
     MW = datasets['uuid'][ii+1]
     ds_noMW = load_by_uuid(noMW)
     ds_MW = load_by_uuid(MW)
-    fit_fast_PSB(noMW,MW)
+    point, vis = fit_fast_PSB(ds_noMW,ds_MW)
+    readout_points.append(point)
+    readout_vis.append(vis)
+  
+#%%
+all_datasets,  names, uuids = query_database(search_time[0],search_time[1])
+
+jump = []
+chop_idx = np.insert(np.where(names == 'Q1, Ramsey_time_evo')[0],0,0)
+for ii,idx in enumerate(chop_idx):
+    # print('-----------------')
+    add = 0
+    for jj in range(chop_idx[ii],chop_idx[ii+1]+1):
+        add +=1
+    if add !=4:
+        print(f'jump seen during {uuids[chop_idx[ii]]}')
+        
+        
+                
+
+
+
+# print(2040%1607)
+# jumps = [0,443,]
+
+#%% concatenate all datasets and plot 
+# datasets = query_database(search_time[0],search_time[1], name = 'Ramsey_time_evo')ax
+fig, ax = plt.subplots(1,2)
+x_end = 0
+for uuid in tqdm(datasets['uuid'][5:10], total = len(datasets['uuid'])):
+    ds = load_by_uuid(uuid)
+    ds_avg = ds[f'total_selected']
+    x,y,z = np.nan_to_num(ds_avg.x())[:40],np.nan_to_num(ds_avg.y()),np.nan_to_num(ds_avg.z())[:40]
+    ax[0].pcolormesh(y,x_end+x,z)
     
+    ds_avg = ds[f'read{qubit}']
+    x,y,z = np.nan_to_num(ds_avg.x())[:40],np.nan_to_num(ds_avg.y()),np.nan_to_num(ds_avg.z())[:40]
+    ax[1].pcolormesh(y,x_end+x,z)
+    
+    x_end+=x[-1]
+    ax[0].axhline(x_end, linewidth = 2, alpha = 0.9, color='red')
+    ax[1].axhline(x_end, linewidth = 2, alpha = 0.9, color='red')
 
-
-#%% 1 dataset averaged all
-qubit = 1
-label='vP1 = 21.3mV'
-plot = False 
-uuids = [1668609555987974076]
+plt.show()
 
 #%%
+datasets = query_database(search_time[0],search_time[1], name = 'Ramsey_time_evo')
+
 T2s, Omegas = np.array([]),np.array([])
-for uuid in uuids:
+for uuid in datasets['uuid']:
     ds = load_by_uuid(uuid)
     ds_avg = ds[f'read{qubit}']
        
@@ -111,7 +152,7 @@ for uuid in uuids:
 
 #%% histogram T2*
 name = f'{label}, N={len(T2s)}'
-counts, bins = np.histogram(T2s, density=True, range=(2e-6,3.5e-6), bins= int(3*np.sqrt(len(T2s))))
+counts, bins = np.histogram(T2s, density=True, range=(2e-6,3.5e-6), bins= int(6*np.sqrt(len(T2s))))
 params, errors = fit_Gaussian(bins,counts, title=name, plot=True)
 #%% 
 param = Omegas
@@ -139,27 +180,29 @@ plt.figure(900)
 x_last = 0
 qubit=1
 plot = False 
-datasets = query_database('2022-11-19 8:53:30','2022-11-19 9:08:30', name = 'Ramsey_time_evo' )
-thresholds = [160,0,400,80,0,500]#this are in minutes 
+datasets = query_database(search_time, name = 'Ramsey_time_evo' )
+thresholds = [0,0,0,740, ]
 color = 'blue'
 for ii,uuid in enumerate(datasets['uuid']):
     ds = load_by_uuid(int(uuid))
     ds_avg = ds[f'read{qubit}']
-    
     thr = thresholds[ii]
-    thr_idx = find_closest_idx(ds_avg.x(),thr)
-    print(thr_idx)
     
     
        
     mask1 = nan_mask(ds_avg)
-    mask2 = vals_mask(ds_avg, 0)#introduce X axis value for thresholding when the charge jump is. keep data below it
+    mask2 = vals_mask(ds_avg, thr)#introduce X axis value for thresholding when the charge jump is. keep data below it
     mask = np.unique(np.concatenate((mask1,mask2),0))
 
     T2, Omega = process_data(ds_avg, mask)
     # print(Omega)
     dt = (ds_avg.x()[1]-ds_avg.x()[0])
-    time = x_last+np.arange(0,dt*len(Omega), dt)
+    time =np.arange(0,dt*len(Omega), dt)
+    
+    
+    thr_idx = find_closest_idx(time,thr)
+    time += x_last
+    
     if (thr == 0) or (thr>dt*len(Omega)):
         plt.plot(time,Omega, color = color)
     else:
@@ -169,12 +212,12 @@ for ii,uuid in enumerate(datasets['uuid']):
         else:
             color='blue'
         plt.plot(time[thr_idx+1:],Omega[thr_idx+1:], '--' ,color=color)
-        plt.axvline(x_last+thr, linewidth = 1, alpha = 0.3, color='red')
+        plt.axvline(time[thr_idx], linewidth = 1, alpha = 0.3, color='red')
         
     x_last = time[-1]
     plt.axvline(x_last, linewidth = 1, alpha = 0.3, color='gray')
     
-# plt.legend()
+plt.legend()
 plt.show()
     
     

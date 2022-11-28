@@ -44,5 +44,5 @@ def fit_fast_PSB(ds_noMW, ds_MW, measurement='read12', plot=True, fig_num=999):
         # plt.plot(x,MW, label='MW')
         plt.plot(x,np.abs(MW-noMW), alpha=0.5, linewidth = 3,label='Vis')
         plt.plot(readout_point,vis, 'ro')
-        print(f'VIS={vis*100}%, vP1= {readout_point} mV')
+        # print(f'VIS={vis*100}%, vP1= {readout_point} mV')
     return readout_point, vis

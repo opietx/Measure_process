@@ -69,17 +69,32 @@ def query_database(init_time = '2022-11-16 11:57:50', final_time='2022-11-16 23:
             start_time=init_time, end_time=final_time,
             name = name,
             remote=True)
-    datasets = {'uuid':[],'name':[],'date':[]}
+    
+    uuids = np.array([], dtype='int')
+    names = np.array([])
+    dates = np.array([])
     for ii,exp in enumerate(res):
-        datasets['uuid'].append(exp.uuid)
-        datasets['name'].append(exp.name)
-        datasets['date'].append(exp.start_time)
+        uuids = np.append(uuids, int(exp.uuid))
+        names = np.append(names,exp.name)
+        dates = np.append(dates,exp.start_time)
+    
+    
+    p = dates.argsort()
+    dates = dates[p]
+    names = names[p]
+    uuids = uuids[p]
+    
+    datasets = []
+    for ii in range(len(dates)):
+        datasets.append({'uuid':uuids[ii],'name':names[ii],'date':dates[ii]})
+    
+    
     if echo:
-        print("{:<3}\t{:<20}t{:<20}".format('num','UUID','name'))
-        for ii, uuid in enumerate(datasets['uuid']):
-            print("{:<3}\t{:<20}\t{:<20}".format(ii, uuid, datasets['name'][ii]))
+        print("{:<3}\t{:<20}\t{:<20}".format('num','UUID','name'))
+        for ii, ds in enumerate(datasets):
+            print("{:<3}\t{:<20}\t{:<20}".format(ii,ds['uuid'],ds['name']))
         
-    return datasets
+    return datasets, names, uuids
  
  
 
