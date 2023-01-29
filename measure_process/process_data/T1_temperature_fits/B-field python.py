@@ -65,14 +65,14 @@ def GammaValley_ph(omega):
 
 Rk = 25.813e3  #quantum hall resistance
 def GammaValley_jh(omega,T):
-    return  2* R_j / Rk * omega * ht**2 * 3*r**2 / l_j**2 *1/np.tanh(omega*ht/(2*kb*T/1000)) #+ #2* R*3 / Rk * omega * ht**2 * 3*r**2 / l**2
+    return  0*2* R_j / Rk * omega * ht**2 * 3*r**2 / l_j**2 *1/np.tanh(omega*ht/(2*kb*T/1000)) #+ #2* R_j / Rk * omega * ht**2 * 3*r**2 / l_j**2
 
 
 def GammaValley_1_f(omega,T):
     return  2 * (S0 * (T/1000)**2)/omega*3*r**2 / l_f**2#check if this has the correct units or maybe needs to be weighted by 
 #Fast spin-valley-based quantum gates in Si with micromagnets -  HUANG
 def GammaValley_power_law(omega,T):
-    return 4*2 * S0 * (T/1000)**11 /omega*3*r**2 / l_f**2#check if this has the correct units or maybe needs to be weighted by 
+    return 0*4*2 * S0 * (T/1000)**11 /omega*3*r**2 / l_f**2#check if this has the correct units or maybe needs to be weighted by 
 
 
 #bose distribution for number of phonons
@@ -84,7 +84,7 @@ omega = g*ub*B/ht
 
 
 #%%plot energies vs B-field
-plot = True
+plot = False
 if plot:
     B = np.linspace(0,4,100)
     omega = g*ub*B/ht
@@ -112,40 +112,14 @@ if plot:
 
 
 
-#Matrix of coefficients between states
-a1 = -(Evs-ht*omega) / np.sqrt((Evs-ht*omega)**2+Delta**2)
-a2 = -(Evs+ht*omega) / np.sqrt((Evs+ht*omega)**2+Delta**2) 
-
-def SinGamma(x):
-	return np.sqrt((1-x)/2)
-def CosGamma(x):
-	return np.sqrt((1+x)/2)
-
-#how is matrix obtained???
-valley_coupling = np.zeros((4,4)) 
-valley_coupling[0,1] = -CosGamma(a1)*SinGamma(a2) - SinGamma(a1)*CosGamma(a2) 
-valley_coupling[0,2] = SinGamma(a1)*SinGamma(a2) - CosGamma(a1)*CosGamma(a2) 
-valley_coupling[0,3] = SinGamma(a2)*CosGamma(a2) 
-valley_coupling[1,2] = SinGamma(a1)*CosGamma(a1) 
-valley_coupling[1,3]= -CosGamma(a1)*CosGamma(a2) + SinGamma(a1)*SinGamma(a2)
-valley_coupling[2,3] = SinGamma(a1)*CosGamma(a2) + CosGamma(a1)*SinGamma(a2) 
-
-
-valley_coupling  =valley_coupling+ np.transpose(np.conjugate(valley_coupling))
-
-# energy of states
-E0 = -(Evs + ht*omega)/2 
-E1 = -np.sqrt((Evs - ht*omega)**2+Delta**2) / 2 
-E2 = +np.sqrt((Evs - ht*omega)**2+Delta**2) / 2 
-E3 = (Evs + ht*omega)/2 
-E = np.array([E0,E1,E2,E3])
-
 
 # Getting Rates
 index=np.array([0,1,2,3])
 
-temperatures= np.linspace(15, 2000, 300)
-temp_res = len(temperatures)
+T = 1500
+
+B_fields= np.linspace(0.5, 20, 200)
+temp_res = len(B_fields)
 
 Gamma = np.zeros((4,4)) 
 # original: zeros(4,4, temp_res) ; % ij means transition from i to j
@@ -163,7 +137,41 @@ Gammac = np.zeros((4, temp_res))
 
 
 
-for kk, T in tqdm(enumerate(temperatures), total=len(temperatures), desc='1st order'):
+for kk, B in tqdm(enumerate(B_fields), total=len(B_fields), desc='1st order'):
+    omega = g*ub*B/ht
+    
+    
+    #Matrix of coefficients between states
+    a1 = -(Evs-ht*omega) / np.sqrt((Evs-ht*omega)**2+Delta**2)
+    a2 = -(Evs+ht*omega) / np.sqrt((Evs+ht*omega)**2+Delta**2) 
+    
+    def SinGamma(x):
+    	return np.sqrt((1-x)/2)
+    def CosGamma(x):
+    	return np.sqrt((1+x)/2)
+    
+    #how is matrix obtained???
+    valley_coupling = np.zeros((4,4)) 
+    valley_coupling[0,1] = -CosGamma(a1)*SinGamma(a2) - SinGamma(a1)*CosGamma(a2) 
+    valley_coupling[0,2] = SinGamma(a1)*SinGamma(a2) - CosGamma(a1)*CosGamma(a2) 
+    valley_coupling[0,3] = SinGamma(a2)*CosGamma(a2) 
+    valley_coupling[1,2] = SinGamma(a1)*CosGamma(a1) 
+    valley_coupling[1,3]= -CosGamma(a1)*CosGamma(a2) + SinGamma(a1)*SinGamma(a2)
+    valley_coupling[2,3] = SinGamma(a1)*CosGamma(a2) + CosGamma(a1)*SinGamma(a2) 
+    
+    
+    valley_coupling  =valley_coupling+ np.transpose(np.conjugate(valley_coupling))
+    
+    # energy of states
+    E0 = -(Evs + ht*omega)/2 
+    E1 = -np.sqrt((Evs - ht*omega)**2+Delta**2) / 2 
+    E2 = +np.sqrt((Evs - ht*omega)**2+Delta**2) / 2 
+    E3 = (Evs + ht*omega)/2 
+    E = np.array([E0,E1,E2,E3])
+
+    
+    
+    
     #these are the first order rates
     for ii in range(4):
         for jj in range(4):
@@ -257,8 +265,8 @@ for ii in range(temp_res):
 
 #%% Plotting
 
-y = 1/abs(eigenvalues[:,1]) #these are T1 times
-x = temperatures
+y = (abs(eigenvalues[:,1])) #these are T1 times
+x = (B_fields)
 
 
 
@@ -271,7 +279,7 @@ if plot_trace:
     print('Plot')
     plt.figure(55)
     plt.semilogy(x, y,'.-', label = f'{Evs*1e6} ueV')
-    plt.xlabel('Temperature [mK]')
+    plt.xlabel('B_fields [mT]')
     plt.ylabel('T1 [s]')
     plt.legend()
     

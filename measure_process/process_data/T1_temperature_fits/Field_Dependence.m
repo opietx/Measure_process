@@ -40,8 +40,8 @@ GammaValley_jh = @(omega) 2.* R / Rk * omega * ht^2 * 3*r.^2 ./ l^2 ;
 
 %% Simulation B dependence
 B_res = 400 ;
-B_list=linspace(0.5, 20, B_res) ;
-T=0.1 ; %Temperature
+B_list=linspace(0.01, 5, B_res) ;
+T=200 ; %Temperature
 rate = zeros(4,4, B_res) ;
 
 for ii=1:length(B_list)
@@ -125,4 +125,4 @@ end
 
 %% Plotting
 figure
-loglog(B_list, abs(eigenvalues(:,2)), '-')
+semilogy(B_list, abs(eigenvalues(:,2)), '-')

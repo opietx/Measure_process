@@ -78,9 +78,9 @@ def vals_mask(ds_avg,thr):
     return mask
 
 
-search_time = ['2022-11-19 17:18:00','2022-11-20 23:59:59']
+search_time = ['2023-01-16 22:15:00','2023-01-17 03:59:59']
 #%% obtain the readout traces
-datasets = query_database(search_time[0],search_time[1], name = 'MW' )
+datasets = query_database(search_time[0],search_time[1], name = '12 :: ZZ_stability' )
 readout_points = []
 readout_vis = []
 for ii in tqdm(range(int(len(datasets['uuid'])/2 -1 ))):
@@ -118,7 +118,7 @@ for ii,idx in enumerate(chop_idx):
 # datasets = query_database(search_time[0],search_time[1], name = 'Ramsey_time_evo')ax
 fig, ax = plt.subplots(1,2)
 x_end = 0
-for uuid in tqdm(datasets['uuid'][5:10], total = len(datasets['uuid'])):
+for uuid in tqdm(datasets[3], total = len(datasets['uuid'])):
     ds = load_by_uuid(uuid)
     ds_avg = ds[f'total_selected']
     x,y,z = np.nan_to_num(ds_avg.x())[:40],np.nan_to_num(ds_avg.y()),np.nan_to_num(ds_avg.z())[:40]
@@ -135,7 +135,7 @@ for uuid in tqdm(datasets['uuid'][5:10], total = len(datasets['uuid'])):
 plt.show()
 
 #%%
-datasets = query_database(search_time[0],search_time[1], name = 'Ramsey_time_evo')
+datasets = query_database(search_time[0],search_time[1], name = 'ZZ_stability')
 
 T2s, Omegas = np.array([]),np.array([])
 for uuid in datasets['uuid']:

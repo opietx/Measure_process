@@ -6,11 +6,11 @@ from core_tools.data.ds.data_set import load_by_uuid
 from measure_process.fits.T1 import  Decay_formula, fit_decay_T1
 
 #%% 1 dataset averaged all
-qubit = 5
+qubit = 2
 plot = True 
-uuid = 1658795515753974076     
+uuid = 1658793092358974076      
 ds = load_by_uuid(uuid)
-data_plotter(ds)
+# data_plotter(ds)
 ds_avg = ds[f'read{qubit}'].average('x')
 x,y = 1e-9*ds_avg.x(), ds_avg.y()
 #it is 1-y for T1 and only y for T1_PSB
@@ -18,26 +18,34 @@ params, errors = fit_decay_T1(x,y,uuid, plot=plot)
 print(errors['T1'])
 
 #%%
-temp=200
-# name = f'Q{qubit}'
-name = f'Q{qubit}_baseline'
 
-dic_data = {'time':x,f'Q{qubit}':y}
-data_dump(dic_data,f'T1/{temp}mK',name)
+# qubit = 1
+# plot = True 
+# uuid = 1659464931048974087     
+# ds = load_by_uuid(uuid)
+# data_plotter(ds)
+# ds_avg = ds[f'read{qubit}'].average('x')
+
+# temp=200
+# # name = f'Q{qubit}'
+# name = f'Q{qubit}_baseline'
+
+# dic_data = {'time':x,f'Q{qubit}':y}
+# data_dump(dic_data,f'T1/{temp}mK',name)
 
 
 
 #%% to select multiple datasets parts
 y_multiple = []
 
-qubit = 6
+qubit = 1
 plot = True 
-uuid = 1659501470834974087    
+uuid = 1659464931048974087    
 ds = load_by_uuid(uuid)
 # data_plotter(ds)
 
 
-for ii in range(0,1):
+for ii in range(1,3):
     y_multiple.append(ds[f'read{qubit}'][ii].y())
 
 y_avg = sum(y_multiple)/len(y_multiple)

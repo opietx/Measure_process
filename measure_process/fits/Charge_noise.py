@@ -29,7 +29,7 @@ def one_over_f_noise(param, x, data=None):
 
 def fit_PSD(x,y,name='', plot=False):
     
-    idx1 = ((x > 0.7) & (x <= 15)) #range
+    idx1 = ((x > 1) & (x <= 20)) #range
     
     #remove stable peaks
     idx2= ~((x>4.12) & (x<4.27)) 
@@ -76,7 +76,7 @@ def fit_PSD(x,y,name='', plot=False):
          plt.show()
     # print(f'1HZ noise = {np.sqrt(10**out.params["P_noise"])}')
     print(f'alpha = {out.params["alpha"].value}')
-    return out.params, errors
+    return out.params, errors, [x_fit, y_fit]
          
 
     

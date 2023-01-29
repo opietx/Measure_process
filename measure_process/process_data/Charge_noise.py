@@ -29,6 +29,7 @@ def to_PSD(uuid, n_seg = 2, lever_arm=0.18, new_slope =1, old_slope=1):
     
     
     
+    
     f_s= 1/ds_1.m1.x()[1]
     nperseg = 2**int(np.log2(int(y.size/n_seg)))
     
@@ -71,16 +72,19 @@ def obtain_slope_give_voltage(uuid,meas_point):
     slope = y_dif[arg_max]*1000 #gate in mV
     
     
+    
     return slope
 
 #%%
 plot = True 
-uuid =1659439070335974087#     
-new_slope = obtain_slope_give_voltage(1659354729808974087, 1534.995030060120)
-x, y = to_PSD(uuid, n_seg=20, lever_arm=0.185, new_slope=new_slope, old_slope=1.4299499961589247e-11)    
-params, errors = fit_PSD(x,y,name=uuid,plot=plot)
+uuid =1659360940238974087#     
+new_slope =obtain_slope_give_voltage(1659360819650974087, 1534.9369138273353)
+x, y = to_PSD(uuid, n_seg=20, lever_arm=0.185, new_slope=new_slope, old_slope=6.602043148313142e-12)    
+
+params, errors, [x,y] = fit_PSD(x,y,name=uuid,plot=plot)
+x,y = x[:500], y[:500]
 dic_psd = {'Freq':x,f'PSD':y}
-data_dump(dic_psd,'Charge_noise',f'aaa') #if you want to export the PSD aswell
+data_dump(dic_psd,'Charge_noise',f'500mk') #if you want to export the PSD aswell
 
 #%%
 temps = [200,300,400,500,600,700,800,900,950,1000,1050,1100,1200,1300]

@@ -37,7 +37,7 @@ def data_dump(data, folder, name):
     None.
 
     '''
-    dire = os.path.join(r'M:\tnw\ns\qt\spin-qubits\data\Oriol Pietx\Data', folder)
+    dire = os.path.join(r'M:\tnw\ns\qt\spin-qubits\projects\Hot qubit SiGe\Data', folder)
     if not os.path.exists(dire):
         os.makedirs(dire)
         
