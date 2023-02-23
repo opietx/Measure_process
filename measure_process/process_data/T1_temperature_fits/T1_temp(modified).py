@@ -14,7 +14,7 @@ from measure_process.Init_file import data_dump
 
 store_trace = False
 plot_trace=True
-name = ''
+name = 'sum'
 Q='6'
 
 
@@ -22,19 +22,19 @@ Q='6'
 B = 0.578 #computed from the qubit splitting it should be 0.575 (16.3GHz), #B-fields 
 
 #Evs = [1,2,5,6]->[220,140,220,300] ueV
-Evs = 300e-6#1/3*300e-6  #valley splitting
-#Delta = [1,2,5,6]->[0,7e-9,0,10e-9] 
-Delta = 10e-9 #splitting at the anticrossing point (can i measure this better?) Linear with valley splitting
-r = 0.75e-9 #dipole moment, used the same for lateral and transversal phonons (how can i get a better value??)
+Evs = 300e-6# #valley splitting
+#Delta = [1,2,5,6]->[7.6e-9,7e-9,0,10e-9] 
+Delta = 0.115e-6 #splitting at the anticrossing point (can i measure this better?) Linear with valley splitting
+r = 2.5e-9 #dipole moment, used the same for lateral and transversal phonons (how can i get a better value??)
 
 #Johnson
-R_j =150e3# 150e3 #Characteristic noise Johnson resistance
+R_j =1e2# 150e3 #Characteristic noise Johnson resistance
 #l_j = [1,2,5,6] -> [75e-9,120e-9,120e-9,75e-9]
 l_j = 75e-9 #characteristic distance from noise to qubit, Johnson
 
 #1/f noise with temp
 l_f = 55e-9 #roughly distanvce from QD to noise source
-S0 = (0.04e-6)
+S0 = (0.005e-6) #Q5 needs a super low charge noise from 1/f
 #%%
 
 pi = np.pi
@@ -65,14 +65,14 @@ def GammaValley_ph(omega):
 
 Rk = 25.813e3  #quantum hall resistance
 def GammaValley_jh(omega,T):
-    return  2* R_j / Rk * omega * ht**2 * 3*r**2 / l_j**2 *1/np.tanh(omega*ht/(2*kb*T/1000)) #+ #2* R*3 / Rk * omega * ht**2 * 3*r**2 / l**2
-
+    # return  2* R_j / Rk * omega**0.5 * ht**2 * 3*r**2 / l_j**2 *1/np.tanh(omega*ht/(2*kb*T/1000)) 
+    return  2* R_j / Rk * omega * ht**2 * 3*r**2 / l_j**2 *1/np.tanh(omega*ht/(2*kb*T/1000)) 
 
 def GammaValley_1_f(omega,T):
-    return  2 * (S0 * (T/1000)**2)/omega*3*r**2 / l_f**2#check if this has the correct units or maybe needs to be weighted by 
+    return  2 * (S0 * (T/1000)**2)/(omega**1.2) *3*r**2 / l_f**2 #check if this has the correct units or maybe needs to be weighted by 
 #Fast spin-valley-based quantum gates in Si with micromagnets -  HUANG
 def GammaValley_power_law(omega,T):
-    return 4*2 * S0 * (T/1000)**11 /omega*3*r**2 / l_f**2#check if this has the correct units or maybe needs to be weighted by 
+                return 2 * 0.007e-6 * (T/1000)**11 /omega*3*r**2 / l_f**2#check if this has the correct units or maybe needs to be weighted by 
 
 
 #bose distribution for number of phonons
@@ -84,7 +84,7 @@ omega = g*ub*B/ht
 
 
 #%%plot energies vs B-field
-plot = True
+plot = False
 if plot:
     B = np.linspace(0,4,100)
     omega = g*ub*B/ht
@@ -264,13 +264,13 @@ x = temperatures
 
 if store_trace:
     print('Trace stored')
-    data_dic={'T':x, f'Q{Q}{name}': y}
-    data_dump(data_dic, 'T1/fits',f'Q{Q}_1p{name}' )
+    data_dic={'T':x, f'{name}': y}
+    data_dump(data_dic, f'T1/fits/Q{Q}',f'{name}' )
 
 if plot_trace:
     print('Plot')
     plt.figure(55)
-    plt.semilogy(x, y,'.-', label = f'{Evs*1e6} ueV')
+    plt.semilogy(x, y,'-', label = f'{Evs*1e6} ueV')
     plt.xlabel('Temperature [mK]')
     plt.ylabel('T1 [s]')
     plt.legend()

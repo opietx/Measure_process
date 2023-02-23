@@ -6,11 +6,11 @@ from core_tools.data.ds.data_set import load_by_uuid
 from measure_process.fits.T1 import  Decay_formula, fit_decay_T1
 
 #%% 1 dataset averaged all
-qubit = 2
+qubit = 1
 plot = True 
-uuid = 1658793092358974076      
+uuid = 1658533041901974076      
 ds = load_by_uuid(uuid)
-# data_plotter(ds)
+data_plotter(ds)
 ds_avg = ds[f'read{qubit}'].average('x')
 x,y = 1e-9*ds_avg.x(), ds_avg.y()
 #it is 1-y for T1 and only y for T1_PSB
@@ -19,19 +19,19 @@ print(errors['T1'])
 
 #%%
 
-# qubit = 1
-# plot = True 
-# uuid = 1659464931048974087     
-# ds = load_by_uuid(uuid)
-# data_plotter(ds)
-# ds_avg = ds[f'read{qubit}'].average('x')
+qubit = 1
+plot = True 
+uuid = 1658523333405974076     
+ds = load_by_uuid(uuid)
+data_plotter(ds)
+ds_avg = ds[f'read{qubit}'].average('x')
+x,y = 1e-9*ds_avg.x(), ds_avg.y()
+temp=450
 
-# temp=200
-# # name = f'Q{qubit}'
-# name = f'Q{qubit}_baseline'
+name = f'Q{qubit}'
 
-# dic_data = {'time':x,f'Q{qubit}':y}
-# data_dump(dic_data,f'T1/{temp}mK',name)
+dic_data = {'time':x,f'Q{qubit}':y}
+data_dump(dic_data,f'T1/{temp}mK',name)
 
 
 

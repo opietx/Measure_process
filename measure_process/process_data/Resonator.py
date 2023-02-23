@@ -5,23 +5,23 @@ from core_tools.data.ds.data_set import load_by_uuid
 uuids = [1654610400421974076,1654614457460974076,1654615405396974076,1654617162067974076,1654619501694974076]#SD1
 # uuids = [1654612345879974076,1654612793643974076,1654615872498974076,1654616613714974076,1654620017731974076]#SD2
 t = [800,600,400,200,15]
-ch='ch1'
+ch=1
 plt.figure()
 for ii, uuid in enumerate(uuids): 
     dic_data = {'x':None,'y':None}
 
     ds = load_by_uuid(uuid)
-    x = ds[ch].average('y').x()
+    x = ds[f'ch{ch}'].average('y').x()
     
     
-    I = ds['ch1'].average('y').y()
-    Q = ds['ch2'].average('y').y()
+    I = ds[f'ch{ch}'].average('y').y()
+    Q = ds[f'ch{ch+1}'].average('y').y()
     
     mod = np.sqrt(I**2 + Q**2)
     ang = np.rad2deg(np.arctan(I/Q))
     dic_data['x'] = x
     dic_data['y'] = mod
-    data_dump(dic_data,'Resonator',str(t[ii]))
+    data_dump(dic_data,'Resonator/SD1',str(t[ii]))
     plt.plot(x,mod,label=f'{t[ii]}')    
 
 plt.xlabel('RF freq [Hz]')
